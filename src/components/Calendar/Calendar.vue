@@ -45,7 +45,7 @@
             right
             v-model="setMonthlyDialogOpen"
             persistent
-            max-width="500px"
+            max-width="450px"
           >
             <template v-slot:activator="{ on, attrs }">
               <v-btn
@@ -58,15 +58,27 @@
                 営業日•時間を登録
               </v-btn>
             </template>
+            <v-form ref="updateMonthlyForm" lazy-validation>
             <form @submit.prevent="sendUpdateMonthlyData()">
               <v-card>
                 <v-card-title>
-                  <span 
-                    style="margin: auto; font-size: 1em; display: flex;"
-                  >
-                    <v-icon>mdi-calendar-month-outline</v-icon>
-                    <span style="padding-top: 4px; padding-left: 3px;"><strong>営業日・時間の登録</strong></span>
-                  </span>
+                  <v-row justify="center">
+                    <v-spacer></v-spacer>
+                    <span 
+                      style="margin: auto; font-size: 1em; display: flex;"
+                    >
+                      <v-icon>mdi-calendar-month-outline</v-icon>
+                      <span style="padding-top: 4px; padding-left: 3px;"><strong>営業日・時間の登録</strong></span>
+                    </span>
+                    <v-spacer></v-spacer>
+                    <v-btn
+                      icon
+                      right
+                      @click="setMonthlyDialogOpen = false"
+                    >
+                      <v-icon>mdi-close</v-icon>
+                    </v-btn>
+                  </v-row>
                 </v-card-title>
                 <v-divider horizontal></v-divider>
                 <v-card-text>
@@ -198,7 +210,7 @@
                                 v-on="on"
                                 color="grey lighten-1"
                                 class="timepicker-textfield"
-                                required
+                                :rules="[rules.required]"
                             ></v-text-field>
                             </template>
                             <v-time-picker
@@ -234,6 +246,7 @@
                                 color="grey lighten-1"
                                 class="timepicker-textfield"
                                 required
+                                :rules="[rules.required]"
                             ></v-text-field>
                             </template>
                             <v-time-picker
@@ -280,6 +293,7 @@
                                 color="grey lighten-1"
                                 class="timepicker-textfield"
                                 required
+                                :rules="[rules.required]"
                             ></v-text-field>
                             </template>
                             <v-time-picker
@@ -316,6 +330,7 @@
                                 color="grey lighten-1"
                                 class="timepicker-textfield"
                                 required
+                                :rules="[rules.required]"
                             ></v-text-field>
                             </template>
                             <v-time-picker
@@ -336,8 +351,9 @@
                         color="grey lighten-1"
                         class="ma-2 black--text"
                         large
+                        style="margin-top: -28px !important;"
                         @click="sendUpdateMonthlyData"
-                        :disabled="!isValid"
+                        :disabled="!value"
                       >
                         設定する
                       </v-btn>
@@ -346,6 +362,7 @@
                 </v-card-text>
               </v-card>
             </form>
+            </v-form>
           </v-dialog>
           <!-- >>>>>>>Registration of business days and hours Part End  >>>>>>>> -->
         </v-toolbar>
@@ -406,7 +423,7 @@
             <div class="text-center">
                 <v-dialog
                     v-model="setDayDialogOpen"
-                    width="350"
+                    max-width="350px"
                 >
                   <v-card>
                       <v-card-title class="headline lighten-2">
@@ -436,7 +453,7 @@
                                   <v-dialog
                                       v-model="setBusinessDayDialogOpen"
                                       persistent
-                                      max-width="600px"
+                                      max-width="450px"
                                   >
                                       <template v-slot:activator="{ on, attrs }">
                                       <v-btn
@@ -452,213 +469,219 @@
                                           <span style="padding-top: 2px; padding-left: 3px;"> 営業時間設定</span>
                                       </v-btn>
                                       </template>
-                                      <form @submit.prevent="sendUpdateDayData()">
-                                        <v-card>
-                                          <v-card-title>
-                                            <v-row justify="center">
-                                            <v-spacer></v-spacer>
-                                            <span
-                                                style="font-size: 1em; display: flex;"
-                                                align="center"
-                                            >
-                                              <v-icon>mdi-calendar-month-outline</v-icon>
-                                              <span style="padding-top: 4px; padding-left: 3px;"> {{ selectedDate }}</span>
-                                            </span>
-                                            <v-spacer></v-spacer>
-                                            <v-btn
-                                              icon
-                                              right
-                                              @click="setBusinessDayDialogOpen = false"
-                                            >
-                                              <v-icon>mdi-close</v-icon>
-                                            </v-btn>
-                                            </v-row>
-                                          </v-card-title>
-                                          <v-divider horizontal></v-divider>
-                                          <v-card-text>
-                                            <v-container class="grey lighten-5">
-                                              <v-row>
-                                                <span style="font-size: 1.3em; margin: 10px;"><strong>営業時間</strong></span>
-                                              </v-row>
-                                              <v-row>
-                                                <v-col
-                                                  cols="12"
-                                                  sm="3"
-                                                  style="margin-top: 15px;"
+                                      <v-form ref="updateDailyForm" lazy-validation>
+                                        <form @submit.prevent="sendUpdateDayData()">
+                                          <v-card>
+                                            <v-card-title>
+                                              <v-row justify="center">
+                                                <v-spacer></v-spacer>
+                                                <span
+                                                    style="font-size: 1em; display: flex;"
+                                                    align="center"
                                                 >
-                                                  <h3>ランチ</h3>
-                                                </v-col>
-                                                <v-col
-                                                  cols="12"
-                                                  sm="4"
-                                                >
-                                                  <v-dialog
-                                                      ref="lunchBeginTime"
-                                                      v-model="menu_lunchBeginTime"
-                                                      :close-on-content-click="false"
-                                                      :return-value.sync="lunchBeginTime"
-                                                      transition="scale-transition"
-                                                      max-width="290px"
-                                                      min-width="290px"
-                                                  >
-                                                      <template v-slot:activator="{ on, attrs }">
-                                                      <v-text-field
-                                                          v-model="lunchBeginTime"
-                                                          readonly
-                                                          outlined
-                                                          v-bind="attrs"
-                                                          v-on="on"
-                                                          color="grey lighten-1"
-                                                          class="timepicker-textfield"
-                                                          required
-                                                      ></v-text-field>
-                                                      </template>
-                                                      <v-time-picker
-                                                          v-if="menu_lunchBeginTime"
-                                                          v-model="lunchBeginTime"
-                                                          :max="lunchEndTime"
-                                                          format="24hr"
-                                                          color="grey lighten-1"
-                                                          @click:minute="$refs.lunchBeginTime.save(lunchBeginTime)"
-                                                      ></v-time-picker>
-                                                  </v-dialog>
-                                                </v-col>
-                                                <v-col
-                                                  cols="12"
-                                                  sm="4"
-                                                >   
-                                                  <v-dialog
-                                                      ref="lunchEndTime"
-                                                      v-model="menu_lunchEndTime"
-                                                      :close-on-content-click="false"
-                                                      :return-value.sync="lunchEndTime"
-                                                      transition="scale-transition"
-                                                      max-width="290px"
-                                                      min-width="290px"
-                                                  >
-                                                      <template v-slot:activator="{ on, attrs }">
-                                                      <v-text-field
-                                                          v-model="lunchEndTime"
-                                                          readonly
-                                                          outlined
-                                                          v-bind="attrs"
-                                                          v-on="on"
-                                                          color="grey lighten-1"
-                                                          class="timepicker-textfield"
-                                                          required
-                                                      ></v-text-field>
-                                                      </template>
-                                                      <v-time-picker
-                                                          v-if="menu_lunchEndTime"
-                                                          v-model="lunchEndTime"
-                                                          :min="lunchBeginTime"
-                                                          :max="dinnerBeginTime"
-                                                          format="24hr"
-                                                          color="grey lighten-1"
-                                                          @click:minute="$refs.lunchEndTime.save(lunchEndTime)"
-                                                      ></v-time-picker>
-                                                  </v-dialog>
-                                                </v-col>
-                                              </v-row>
-                                              <v-spacer></v-spacer>
-                                              <v-row>
-                                                <v-col
-                                                  cols="12"
-                                                  sm="3"
-                                                  style="margin-top: 15px"
-                                                >
-                                                  <h3>ディナー</h3>
-                                                </v-col>
-                                                <v-col
-                                                  cols="12"
-                                                  sm="4"
-                                                >
-                                                  <v-dialog
-                                                      ref="dinnerBeginTime"
-                                                      v-model="menu_dinnerBeginTime"
-                                                      :close-on-content-click="false"
-                                                      :return-value.sync="dinnerBeginTime"
-                                                      transition="scale-transition"
-                                                      max-width="290px"
-                                                      min-width="290px"
-                                                  >
-                                                      <template v-slot:activator="{ on, attrs }">
-                                                      <v-text-field
-                                                          v-model="dinnerBeginTime"
-                                                          readonly
-                                                          outlined
-                                                          v-bind="attrs"
-                                                          v-on="on"
-                                                          color="grey lighten-1"
-                                                          class="timepicker-textfield"
-                                                          required
-                                                      ></v-text-field>
-                                                      </template>
-                                                      <v-time-picker
-                                                          v-if="menu_dinnerBeginTime"
-                                                          v-model="dinnerBeginTime"
-                                                          :min="lunchEndTime"
-                                                          :max="dinnerEndTime"
-                                                          format="24hr"
-                                                          color="grey lighten-1"
-                                                          @click:minute="$refs.dinnerBeginTime.save(dinnerBeginTime)"
-                                                      ></v-time-picker>
-                                                  </v-dialog>
-                                                </v-col>
-                                                <v-col
-                                                  cols="12"
-                                                  sm="4"
-                                                >   
-                                                  <v-dialog
-                                                      ref="dinnerEndTime"
-                                                      v-model="menu_dinnerEndTime"
-                                                      :close-on-content-click="false"
-                                                      :return-value.sync="dinnerEndTime"
-                                                      transition="scale-transition"
-                                                      max-width="290px"
-                                                      min-width="290px"
-                                                  >
-                                                      <template v-slot:activator="{ on, attrs }">
-                                                      <v-text-field
-                                                          v-model="dinnerEndTime"
-                                                          readonly
-                                                          outlined
-                                                          v-bind="attrs"
-                                                          v-on="on"
-                                                          color="grey lighten-1"
-                                                          class="timepicker-textfield"
-                                                          required
-                                                      ></v-text-field>
-                                                      </template>
-                                                      <v-time-picker
-                                                          v-if="menu_dinnerEndTime"
-                                                          v-model="dinnerEndTime"
-                                                          :min="dinnerBeginTime"
-                                                          format="24hr"
-                                                          color="grey lighten-1"
-                                                          @click:minute="$refs.dinnerEndTime.save(dinnerEndTime)"
-                                                      ></v-time-picker>
-                                                  </v-dialog>
-                                                </v-col>
-                                              </v-row>
-                                            </v-container>
-                                            <v-container>
-                                              <v-row justify="center"> 
+                                                  <v-icon>mdi-calendar-month-outline</v-icon>
+                                                  <span style="padding-top: 4px; padding-left: 3px;"> {{ selectedDate }}</span>
+                                                </span>
+                                                <v-spacer></v-spacer>
                                                 <v-btn
-                                                  color="grey lighten-1"
-                                                  class="ma-2 black--text"
-                                                  large
-                                                  @click="sendUpdateDayData"
+                                                  icon
+                                                  right
+                                                  @click="setBusinessDayDialogOpen = false"
                                                 >
-                                                設定する
+                                                  <v-icon>mdi-close</v-icon>
                                                 </v-btn>
                                               </v-row>
-                                            </v-container>
-                                          </v-card-text>
-                                          <v-card-actions>
-                                          </v-card-actions>
-                                        </v-card>
-                                      </form>
+                                            </v-card-title>
+                                            <v-divider horizontal></v-divider>
+                                            <v-card-text>
+                                              <v-container class="grey lighten-5">
+                                                <v-row>
+                                                  <span style="font-size: 1.3em; margin: 10px;"><strong>営業時間</strong></span>
+                                                </v-row>
+                                                <v-row>
+                                                  <v-col
+                                                    cols="12"
+                                                    sm="3"
+                                                    style="margin-top: 15px;"
+                                                  >
+                                                    <h3>ランチ</h3>
+                                                  </v-col>
+                                                  <v-col
+                                                    cols="12"
+                                                    sm="4"
+                                                  >
+                                                    <v-dialog
+                                                        ref="lunchBeginTime"
+                                                        v-model="menu_lunchBeginTime"
+                                                        :close-on-content-click="false"
+                                                        :return-value.sync="lunchBeginTime"
+                                                        transition="scale-transition"
+                                                        max-width="290px"
+                                                        min-width="290px"
+                                                    >
+                                                        <template v-slot:activator="{ on, attrs }">
+                                                        <v-text-field
+                                                            v-model="lunchBeginTime"
+                                                            readonly
+                                                            outlined
+                                                            v-bind="attrs"
+                                                            v-on="on"
+                                                            color="grey lighten-1"
+                                                            class="timepicker-textfield"
+                                                            required
+                                                            :rules="[rules.required]"
+                                                        ></v-text-field>
+                                                        </template>
+                                                        <v-time-picker
+                                                            v-if="menu_lunchBeginTime"
+                                                            v-model="lunchBeginTime"
+                                                            :max="lunchEndTime"
+                                                            format="24hr"
+                                                            color="grey lighten-1"
+                                                            @click:minute="$refs.lunchBeginTime.save(lunchBeginTime)"
+                                                        ></v-time-picker>
+                                                    </v-dialog>
+                                                  </v-col>
+                                                  <v-col
+                                                    cols="12"
+                                                    sm="4"
+                                                  >   
+                                                    <v-dialog
+                                                        ref="lunchEndTime"
+                                                        v-model="menu_lunchEndTime"
+                                                        :close-on-content-click="false"
+                                                        :return-value.sync="lunchEndTime"
+                                                        transition="scale-transition"
+                                                        max-width="290px"
+                                                        min-width="290px"
+                                                    >
+                                                        <template v-slot:activator="{ on, attrs }">
+                                                        <v-text-field
+                                                            v-model="lunchEndTime"
+                                                            readonly
+                                                            outlined
+                                                            v-bind="attrs"
+                                                            v-on="on"
+                                                            color="grey lighten-1"
+                                                            class="timepicker-textfield"
+                                                            required
+                                                            :rules="[rules.required]"
+                                                        ></v-text-field>
+                                                        </template>
+                                                        <v-time-picker
+                                                            v-if="menu_lunchEndTime"
+                                                            v-model="lunchEndTime"
+                                                            :min="lunchBeginTime"
+                                                            :max="dinnerBeginTime"
+                                                            format="24hr"
+                                                            color="grey lighten-1"
+                                                            @click:minute="$refs.lunchEndTime.save(lunchEndTime)"
+                                                        ></v-time-picker>
+                                                    </v-dialog>
+                                                  </v-col>
+                                                </v-row>
+                                                <v-spacer></v-spacer>
+                                                <v-row>
+                                                  <v-col
+                                                    cols="12"
+                                                    sm="3"
+                                                    style="margin-top: 15px"
+                                                  >
+                                                    <h3>ディナー</h3>
+                                                  </v-col>
+                                                  <v-col
+                                                    cols="12"
+                                                    sm="4"
+                                                  >
+                                                    <v-dialog
+                                                        ref="dinnerBeginTime"
+                                                        v-model="menu_dinnerBeginTime"
+                                                        :close-on-content-click="false"
+                                                        :return-value.sync="dinnerBeginTime"
+                                                        transition="scale-transition"
+                                                        max-width="290px"
+                                                        min-width="290px"
+                                                    >
+                                                        <template v-slot:activator="{ on, attrs }">
+                                                        <v-text-field
+                                                            v-model="dinnerBeginTime"
+                                                            readonly
+                                                            outlined
+                                                            v-bind="attrs"
+                                                            v-on="on"
+                                                            color="grey lighten-1"
+                                                            class="timepicker-textfield"
+                                                            required
+                                                            :rules="[rules.required]"
+                                                        ></v-text-field>
+                                                        </template>
+                                                        <v-time-picker
+                                                            v-if="menu_dinnerBeginTime"
+                                                            v-model="dinnerBeginTime"
+                                                            :min="lunchEndTime"
+                                                            :max="dinnerEndTime"
+                                                            format="24hr"
+                                                            color="grey lighten-1"
+                                                            @click:minute="$refs.dinnerBeginTime.save(dinnerBeginTime)"
+                                                        ></v-time-picker>
+                                                    </v-dialog>
+                                                  </v-col>
+                                                  <v-col
+                                                    cols="12"
+                                                    sm="4"
+                                                  >   
+                                                    <v-dialog
+                                                        ref="dinnerEndTime"
+                                                        v-model="menu_dinnerEndTime"
+                                                        :close-on-content-click="false"
+                                                        :return-value.sync="dinnerEndTime"
+                                                        transition="scale-transition"
+                                                        max-width="290px"
+                                                        min-width="290px"
+                                                    >
+                                                        <template v-slot:activator="{ on, attrs }">
+                                                        <v-text-field
+                                                            v-model="dinnerEndTime"
+                                                            readonly
+                                                            outlined
+                                                            v-bind="attrs"
+                                                            v-on="on"
+                                                            color="grey lighten-1"
+                                                            class="timepicker-textfield"
+                                                            required
+                                                            :rules="[rules.required]"
+                                                        ></v-text-field>
+                                                        </template>
+                                                        <v-time-picker
+                                                            v-if="menu_dinnerEndTime"
+                                                            v-model="dinnerEndTime"
+                                                            :min="dinnerBeginTime"
+                                                            format="24hr"
+                                                            color="grey lighten-1"
+                                                            @click:minute="$refs.dinnerEndTime.save(dinnerEndTime)"
+                                                        ></v-time-picker>
+                                                    </v-dialog>
+                                                  </v-col>
+                                                </v-row>
+                                              </v-container>
+                                              <v-container>
+                                                <v-row justify="center"> 
+                                                  <v-btn
+                                                    color="grey lighten-1"
+                                                    class="ma-2 black--text"
+                                                    large
+                                                    @click="sendUpdateDayData"
+                                                  >
+                                                  設定する
+                                                  </v-btn>
+                                                </v-row>
+                                              </v-container>
+                                            </v-card-text>
+                                            <v-card-actions>
+                                            </v-card-actions>
+                                          </v-card>
+                                        </form>
+                                      </v-form>
                                   </v-dialog>
                               </v-col>
                           </v-row>
@@ -788,7 +811,10 @@
       checkedDay6: false,
       checkedDay0: false,
       //form part
-      isValid: true,
+      value: true, 
+      rules: {
+          required: value => !!value || 'Required.'
+      },
 
       
     }),
@@ -890,61 +916,70 @@
 
       //form part
       sendUpdateMonthlyData () {
-        let calendarYear = Object.values(this.$refs.calendar.days)[0].year
-        let calendarMonth = Object.values(this.$refs.calendar.days)[0].month
-        let calendarDate = calendarYear.toString() + "-" + calendarMonth.toString()
-        let obj = {
-          date: calendarDate,
-          sunday: this.checkedDay6,
-          monday: this.checkedDay0,
-          tuesday: this.checkedDay1,
-          wednesday: this.checkedDay2,
-          thursday: this.checkedDay3,
-          friday: this.checkedDay4,
-          saturday: this.checkedDay5,
-          lunch_begin_time: this.weekLunchBeginTime,
-          lunch_end_time: this.weekLunchEndTime,
-          dinner_begin_time: this.weekDinnerBeginTime,
-          dinner_end_time: this.weekDinnerEndTime,
+        let validationFlag
+        validationFlag = this.$refs.updateMonthlyForm.validate()
+        
+        if (validationFlag === true) {
+          let calendarYear = Object.values(this.$refs.calendar.days)[0].year
+          let calendarMonth = Object.values(this.$refs.calendar.days)[0].month
+          let calendarDate = calendarYear.toString() + "-" + calendarMonth.toString()
+          let obj = {
+            date: calendarDate,
+            sunday: this.checkedDay6,
+            monday: this.checkedDay0,
+            tuesday: this.checkedDay1,
+            wednesday: this.checkedDay2,
+            thursday: this.checkedDay3,
+            friday: this.checkedDay4,
+            saturday: this.checkedDay5,
+            lunch_begin_time: this.weekLunchBeginTime,
+            lunch_end_time: this.weekLunchEndTime,
+            dinner_begin_time: this.weekDinnerBeginTime,
+            dinner_end_time: this.weekDinnerEndTime,
+          }
+          console.log(obj)
+          let ref = this;
+          axios.post('https://familytakeout.com/manage/shop/calendar/update_monthly', obj)
+          .then(function (response) {
+            console.log(response);
+            alert("Success")
+            ref.setMonthlyDialogOpen = false;  //This part should be revised.
+          })
+          .catch(function (error) {
+            console.log(error);
+            ref.setMonthlyDialogOpen = false;  //This part should be revised.
+            alert("API call failed!")
+          });
         }
-        console.log(obj)
-        let ref = this;
-        axios.post('https://familytakeout.com/manage/shop/calendar/update_monthly', obj)
-        .then(function (response) {
-          console.log(response);
-          alert("Success")
-          ref.setMonthlyDialogOpen = false;  // This part should be revised.
-        })
-        .catch(function (error) {
-          console.log(error);
-          ref.setMonthlyDialogOpen = false;  // This part should be revised.
-          alert("API call failed!")
-        });
       },
       sendUpdateDayData () {
-        let obj = {
-          settings_date: this.settingsDate,
-          lunch_begin_time: this.lunchBeginTime,
-          lunch_end_time: this.lunchEndTime,
-          dinner_begin_time: this.dinnerBeginTime,
-          dinner_end_time: this.dinnerEndTime,
-        }
-        console.log(obj)
-        let ref = this;
-        axios.post('https://familytakeout.com/manage/shop/calendar/update', obj)
-        .then(function (response) {
-          console.log(response);
-          ref.setBusinessDayDialogOpen = false; //This part should be revised
-          ref.setDayDialogOpen = false;
-          alert("Success!")
-        })
-        .catch(function (error) {
-          console.log(error);
-          ref.setBusinessDayDialogOpen = false; //This part should be revised
-          ref.setDayDialogOpen = false;
-          alert("API call failed!")
+        let validationFlag;
+        validationFlag = this.$refs.updateDailyForm.validate()
+        if (validationFlag === true) {
+          let obj = {
+            settings_date: this.settingsDate,
+            lunch_begin_time: this.lunchBeginTime,
+            lunch_end_time: this.lunchEndTime,
+            dinner_begin_time: this.dinnerBeginTime,
+            dinner_end_time: this.dinnerEndTime,
+          }
+          console.log(obj)
+          let ref = this;
+          axios.post('https://familytakeout.com/manage/shop/calendar/update', obj) //This part should be revised
+          .then(function (response) {
+            console.log(response);
+            ref.setBusinessDayDialogOpen = false; 
+            ref.setDayDialogOpen = false;
+            alert("Success!")
+          })
+          .catch(function (error) {
+            console.log(error);
+            ref.setBusinessDayDialogOpen = false;
+            ref.setDayDialogOpen = false;
+            alert("API call failed!")
 
-        });
+          });
+        }
       },
       sendHolidayData() {
         let obj = {
@@ -953,10 +988,10 @@
         }
         console.log(obj)
         var ref=this;
-        axios.post('https://familytakeout.com/manage/shop/calendar/holiday', obj)
+        axios.post('https://familytakeout.com/manage/shop/calendar/holiday', obj) //This part shoud be revised
         .then(function (response) {
           console.log(response);
-          ref.setHolidayDialogOpen = true;
+          ref.setHolidayDialogOpen = true; 
           ref.setDayDialogOpen = false;
           alert("Success!")
         })
@@ -993,6 +1028,11 @@
   }
   .timepicker-textfield {
     width: 100%;
+  }
+  .col-sm-3  h3{
+    text-align: left !important;
+    margin-left: 10px;
+    margin-bottom: 5px;
   }
 }
 
@@ -1057,7 +1097,7 @@
   }
   .holiday-event {
     font-size: 1.3vw;
-    padding: 20% 0%;
+    padding: 17% 0%;
   }
   .mycheckbox {
     width: 14%;
@@ -1111,7 +1151,7 @@
   .weekday {
     border-style: ridge; 
     border-width: 2.2px; 
-    margin: 20px 0px;
+    margin: 3px 0px;
     padding: 0px 15px;
   }
 
@@ -1121,4 +1161,12 @@
       color: rgb(250, 248, 248);
       background-color: rgb(209, 209, 209);
   }
+  .container .col-12{
+    padding: 0px;
+  }
+  .col-sm-3  h3{
+    text-align: right;
+    margin-right: 25px;
+  }
+
 </style>
